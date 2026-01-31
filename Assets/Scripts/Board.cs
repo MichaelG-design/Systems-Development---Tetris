@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -18,6 +19,9 @@ public class Board : MonoBehaviour
     public float dropInterval = 0.5f;
 
     float dropTime = 0.0f;
+
+    //Sets up the inspector to hold the bonus text gameObject
+    public GameObject BonusText;
 
     // Maps tilemap postion to a piece gameObject
     Dictionary<Vector3Int, Piece> pieces = new Dictionary<Vector3Int, Piece>();
@@ -191,8 +195,11 @@ public class Board : MonoBehaviour
                 !activePiece.BigBonus && destroyedLines.Count >= 2)
         {
             //Flat bonus rewarded when conditions are met with the V piece
-            int bonusScore = 5000;
+            int bonusScore = 1000;
             tetrisManager.ChangeScore(bonusScore);
+
+            //Show the bonus text for 2 seconds
+            StartCoroutine(ShowBonusText(2f));
 
             //Big Bonus will only work once per V piece
             activePiece.BigBonus = true;
@@ -249,5 +256,16 @@ public class Board : MonoBehaviour
                 SetTile(cellPosition, null);
             }
         }
+    }
+
+    //Show "+Big Bonus!" text for 2 seconds then hide the object
+    IEnumerator ShowBonusText(float duration)
+    {
+        if (BonusText == null)
+            yield break;
+
+        BonusText.SetActive(true);
+        yield return new WaitForSeconds(duration);
+        BonusText.SetActive(false);
     }
 }
